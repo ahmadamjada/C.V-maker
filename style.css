@@ -1,38 +1,21 @@
-/* body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    width: 100%;
-    height: auto;
-} */
+#cv-address {
+  white-space: pre-wrap; /* Preserve line breaks and spaces */
+  word-wrap: break-word; /* Wrap long words */
+  line-height: 1.5rem;   /* Adjust line height for readability */
+}
 
- /* Custom CSS for responsive adjustments */
- @media (max-width: 768px) {
-    .sidebar {
-      width: 100%;
-      box-shadow: none;
-      margin-bottom: 1rem;
-    }
-    .main-content {
-      margin-top: 1rem;
-    }
-    .cv-preview img {
-      max-width: 80px;
-      height: auto;
-    }
-    .cv-preview h1, .cv-preview h2 {
-      font-size: 1.25rem;
-    }
-    .cv-preview p {
-      font-size: 0.875rem;
-    }
-  }
-  @media (max-width: 480px) {
-    .cv-preview img {
-      max-width: 60px;
-    }
-    .cv-preview h1 {
-      font-size: 1rem;
-    }
-  }
+
+
+
+
+/* Ensure the content wraps properly and does not overlap */
+#cv-education li {
+  word-wrap: break-word;
+  overflow: hidden;
+  line-height: 1.5rem;
+}
+
+/* Add padding and spacing between items if required */
+#cv-education li span {
+  padding: 0 0.25rem;
+}

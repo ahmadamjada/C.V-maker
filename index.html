@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CV Maker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
   <script>
     tailwind.config = {
       theme: {
@@ -204,7 +205,7 @@ aria-label="Open Sidebar"
             <h3 class="font-bold uppercase">Contact Info:</h3>
             <p id="cv-phone" class="text-start">Phone: Your Phone</p>
             <p id="cv-email" class="text-start d-flex">Email: youremail@example.com</p>
-            <p id="cv-address" class="text-start"><span>Address:</span> Your Address</p>
+            <p id="cv-address" class="text-start">Address: Your Address</p>
           </div>
           <hr class="my-4 border-gray-400">
           <!-- Key Skills -->
@@ -276,7 +277,7 @@ aria-label="Open Sidebar"
   const endDateExperience = document.getElementById("end-date-experience").value || "End Date";
   const sidebarColor = document.getElementById("sidebar-color").value;
   const rightSideColor = document.getElementById("right-side-color").value;
-
+  const processedAddress = address.replace(/\n/g, "<br>");
   // Typography Customization
   const sidebarFontSize = document.getElementById("sidebar-font-size").value || "14";
   const mainFontSize = document.getElementById("main-font-size").value || "16";
@@ -297,7 +298,7 @@ aria-label="Open Sidebar"
   document.getElementById("cv-designation").textContent = designation;
   document.getElementById("cv-phone").textContent = `Phone: ${phone}`;
   document.getElementById("cv-email").textContent = `Email: ${email}`;
-  document.getElementById("cv-address").textContent = `Address: ${address}`;
+  document.getElementById("cv-address").innerHTML = `Address: ${processedAddress}`;
 
   // Sidebar Skills and Hobbies
   document.getElementById("cv-skills").innerHTML = skills.map((skill) => `<li>• ${skill.trim()}</li>`).join("");
@@ -305,7 +306,9 @@ aria-label="Open Sidebar"
 
   // Update Main Content
   document.getElementById("cv-description").textContent = description;
-  document.getElementById("cv-education").innerHTML = `<li>${degree} | ${institution} | ${startDateEducation} | ${endDateEducation}</li>`;
+  document.getElementById("cv-education").innerHTML = `<li>${degree} &nbsp;|&nbsp; ${institution} &nbsp;|&nbsp; 
+    <span>${startDateEducation}</span> &nbsp;|&nbsp; 
+    <span>${endDateEducation}</span></li>`;
   document.getElementById("cv-experience").innerHTML = `<li>${role} | ${company} | ${startDateExperience} | ${endDateExperience}</li>`;
 
   // Update Profile Picture
@@ -341,24 +344,6 @@ document.getElementById("download-cv").addEventListener("click", function () {
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
   html2pdf().set(options).from(element).save();
-});
-
-
-
-// Collapsible Input Form
-const collapseButton = document.getElementById("collapse-button");
-const inputFormContainer = document.getElementById("input-form-container");
-
-// Toggle Collapse
-collapseButton.addEventListener("click", () => {
-  const isCollapsed = inputFormContainer.classList.toggle("hidden");
-  collapseButton.innerHTML = isCollapsed
-    ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-       </svg>` // Right Arrow
-    : `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-       </svg>`; // Left Arrow
 });
 
 
