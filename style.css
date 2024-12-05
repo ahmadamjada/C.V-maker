@@ -1,0 +1,38 @@
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+} */
+
+ /* Custom CSS for responsive adjustments */
+ @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      box-shadow: none;
+      margin-bottom: 1rem;
+    }
+    .main-content {
+      margin-top: 1rem;
+    }
+    .cv-preview img {
+      max-width: 80px;
+      height: auto;
+    }
+    .cv-preview h1, .cv-preview h2 {
+      font-size: 1.25rem;
+    }
+    .cv-preview p {
+      font-size: 0.875rem;
+    }
+  }
+  @media (max-width: 480px) {
+    .cv-preview img {
+      max-width: 60px;
+    }
+    .cv-preview h1 {
+      font-size: 1rem;
+    }
+  }
