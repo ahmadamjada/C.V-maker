@@ -42,7 +42,7 @@
 </head>
 <body class="bg-light text-dark">
   <!-- Hamburger Menu for Mobile -->
-  <button
+  <!-- <button
     id="openSidebar"
     class="fixed top-4 left-4 z-50 p-2 rounded-md bg-teal-600 text-white md:hidden"
     aria-label="Open Sidebar"
@@ -52,7 +52,7 @@
 
   <a href="./index.html">link</a>
   <a href="./soft-ui-dashboard-tailwind-main/build/index.html">link 2</a>
-  <a href="/new.html">link 3</a>
+  <a href="/new.html">link 3</a> -->
   <div class="max-w-6xl mx-auto py-10 px-4">
     <h1 class="text-4xl font-bold text-center text-navy mb-6">CV Maker</h1>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -269,6 +269,25 @@
     </div>
   </div>
 
+
+  <!-- fotter start -->
+   
+
+  <footer class="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
+    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-center">
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+        © 2024 
+        <a href="https://muhammad-ahmed.pages.dev" class="hover:underline">Muhammad Ahmed™</a>. 
+        All Rights Reserved. 💻✨  
+        <br>
+        Created ❤️ by Muhammad Ahmed. 👨‍💻🚀
+      </span>
+    </div>
+  </footer>
+  
+
+  <!-- fotter end -->
+
   <script>
     // Add event listeners to input fields
     document.getElementById("name").addEventListener("input", updateCVName);
@@ -301,7 +320,6 @@ document.getElementById("profile-picture").addEventListener("change", updateCVPr
     function updateCVName() {
       document.getElementById("cv-name").textContent = document.getElementById("name").value;
     }
-
 
 
 // Update CV profile picture function
