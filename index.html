@@ -1,48 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV Maker</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css">
-<style>
-#cv-profile-picture {
-  background-color: #f0f0f0; /* Light gray background */
-  /* border: 2px dashed #ccc; Dashed border */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa; /* Placeholder text color */
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 
-#cv-profile-picture:empty::before {
-  content: "Please Select the Image"; /* Placeholder text */
-  font-size: 1rem; /* Adjust font size as needed */
-}
-</style>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            navy: '#1e3a8a',
-            green: '#4ade80',
-            light: '#f1f5f9',
-            dark: '#1e293b',
-            red: '#f87171',
-            teal: '#14b8a6',
-            purple: '#a855f7',
+    <style>
+      #cv-profile-picture {
+        background-color: #f0f0f0; /* Light gray background */
+        /* border: 2px dashed #ccc; Dashed border */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #aaa; /* Placeholder text color */
+      }
+
+      #cv-profile-picture:empty::before {
+        content: "Please Select the Image"; /* Placeholder text */
+        font-size: 1rem; /* Adjust font size as needed */
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: "#1e3a8a",
+              green: "#4ade80",
+              light: "#f1f5f9",
+              dark: "#1e293b",
+              red: "#f87171",
+              teal: "#14b8a6",
+              purple: "#a855f7",
+            },
           },
         },
-      },
-    };
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-</head>
-<body class="bg-light text-dark">
-  <!-- Hamburger Menu for Mobile -->
-  <!-- <button
+      };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  </head>
+  <body class="bg-light text-dark">
+    <!-- Hamburger Menu for Mobile -->
+    <!-- <button
     id="openSidebar"
     class="fixed top-4 left-4 z-50 p-2 rounded-md bg-teal-600 text-white md:hidden"
     aria-label="Open Sidebar"
@@ -53,407 +54,681 @@
   <a href="./index.html">link</a>
   <a href="./soft-ui-dashboard-tailwind-main/build/index.html">link 2</a>
   <a href="/new.html">link 3</a> -->
-  <div class="max-w-6xl mx-auto py-10 px-4">
-    <h1 class="text-4xl font-bold text-center text-navy mb-6">CV Maker</h1>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Input Form -->
-      <div class="bg-white p-6 shadow-lg rounded-md md:col-span-1 hover:shadow-xl transition-shadow duration-300">
-        <h2 class="text-2xl font-bold text-navy mb-4">Enter Your Details</h2>
-        <form id="cv-form" class="space-y-4">
-          <!-- Personal Info -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Name</label>
-            <input type="text" id="name" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Your Full Name">
-          </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Designation</label>
-            <input type="text" id="designation" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Your Designation">
-          </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Profile Picture</label>
-            <input type="file" id="profile-picture" accept="image/*" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
-          </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Phone</label>
-            <input type="text" id="phone" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Phone Number">
-          </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Email</label>
-            <input type="email" id="email" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Email">
-          </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Address</label>
-            <textarea id="address" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Your Address"></textarea>
-          </div>
-
-                    <!-- Profile Summary -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Profile Summary</label>
-            <textarea id="description" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Brief description about yourself"></textarea>
-          </div>
-
-          <!-- Skills -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Key Skills (comma-separated)</label>
-            <textarea id="skills" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Skill 1, Skill 2, ..."></textarea>
-          </div>
-
-          <!-- Hobbies -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Hobbies</label>
-            <textarea id="hobbies" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Hobby 1, Hobby 2, ..."></textarea>
-          </div>
-
-          <!-- Education -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Education (one per line with start and end dates)</label>
-            <div class="space-y-2">
-              <input type="text" id="degree" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Degree">
-              <input type="text" id="institution" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Institution">
-              <input type="date" id="start-date-education" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Start Date">
-              <input type="date" id="end-date-education" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="End Date">
-            </div>
-          </div>
-
-          <!-- Experience -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Experience (one per line with start and end dates)</label>
-            <div class="space-y-2">
-              <input type="text" id="role" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Role">
-              <input type="text" id="company" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Company">
-              <input type="date" id="start-date-experience" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Start Date">
-              <input type="date" id="end-date-experience" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="End Date">
-            </div>
-          </div>
-
-          <!-- Left Sidebar Color Palette -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Sidebar Background Color</label>
-            <select id="sidebar-color" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
-              <option value="navy">Navy</option>
-              <option value="green">Green</option>
-              <option value="red">Red</option>
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-            </select>
-          </div>
-
-          <!-- Right Side Color Palette -->
-          <div>
-            <label class="block text-sm font-bold text-gray-700">Right Side Background Color</label>
-            <select id="right-side-color" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
-              <option value="light">Light</option>
-              <option value="navy">Navy</option>
-              <option value="green">Green</option>
-              <option value="red">Red</option>
-              <option value="dark">Dark</option>
-            </select>
-          </div>
-          <!-- Typography Options -->
-          <div>
-            <h3 class="text-lg font-bold text-navy mb-2">Typography Options</h3>
-
-            <!-- Font Size -->
+    <div class="max-w-6xl mx-auto py-10 px-4">
+      <h1 class="text-4xl font-bold text-center text-navy mb-6">CV Maker</h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Input Form -->
+        <div
+          class="bg-white p-6 shadow-lg rounded-md md:col-span-1 hover:shadow-xl transition-shadow duration-300"
+        >
+          <h2 class="text-2xl font-bold text-navy mb-4">Enter Your Details</h2>
+          <form id="cv-form" class="space-y-4">
+            <!-- Personal Info -->
             <div>
-              <label class="block text-sm font-bold text-gray-700">Font Size (Sidebar)</label>
-              <input type="number" id="sidebar-font-size" class="w-full border-gray-300 rounded-md p-2" placeholder="Enter font size (e.g., 14)">
+              <label class="block text-sm font-bold text-gray-700">Name</label>
+              <input
+                type="text"
+                id="name"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Your Full Name"
+              />
             </div>
-            <div class="mt-2">
-              <label class="block text-sm font-bold text-gray-700">Font Size (Main Content)</label>
-              <input type="number" id="main-font-size" class="w-full border-gray-300 rounded-md p-2" placeholder="Enter font size (e.g., 16)">
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Designation</label
+              >
+              <input
+                type="text"
+                id="designation"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Your Designation"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Profile Picture</label
+              >
+              <input
+                type="file"
+                id="profile-picture"
+                accept="image/*"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700">Phone</label>
+              <input
+                type="text"
+                id="phone"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Phone Number"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700">Email</label>
+              <input
+                type="email"
+                id="email"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Email"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Address</label
+              >
+              <textarea
+                id="address"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Your Address"
+              ></textarea>
             </div>
 
-            <!-- Text Color -->
-            <div class="mt-4">
-              <label class="block text-sm font-bold text-gray-700">Text Color (Sidebar)</label>
-              <input type="color" id="sidebar-text-color" class="w-full border-gray-300 rounded-md p-2">
-            </div>
-            <div class="mt-2">
-              <label class="block text-sm font-bold text-gray-700">Text Color (Main Content)</label>
-              <input type="color" id="main-text-color" class="w-full border-gray-300 rounded-md p-2">
+            <!-- Profile Summary -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Profile Summary</label
+              >
+              <textarea
+                id="description"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Brief description about yourself"
+              ></textarea>
             </div>
 
-            <!-- Font Family -->
-            <div class="mt-4">
-              <label class="block text-sm font-bold text-gray-700">Font Family (Sidebar)</label>
-              <select id="sidebar-font-family" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
-                <option value="Arial">Arial</option>
-                <option value="Calibri">Calibri</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
+            <!-- Skills -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Key Skills (comma-separated)</label
+              >
+              <textarea
+                id="skills"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Skill 1, Skill 2, ..."
+              ></textarea>
+            </div>
+
+            <!-- Hobbies -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Hobbies</label
+              >
+              <textarea
+                id="hobbies"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                placeholder="Hobby 1, Hobby 2, ..."
+              ></textarea>
+            </div>
+
+            <!-- Education -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Education (one per line with start and end dates)</label
+              >
+              <div class="space-y-2">
+                <input
+                  type="text"
+                  id="degree"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="Degree"
+                />
+                <input
+                  type="text"
+                  id="institution"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="Institution"
+                />
+                <input
+                  type="date"
+                  id="start-date-education"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="Start Date"
+                />
+                <input
+                  type="date"
+                  id="end-date-education"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="End Date"
+                />
+              </div>
+            </div>
+
+            <!-- Experience -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Experience (one per line with start and end dates)</label
+              >
+              <div class="space-y-2">
+                <input
+                  type="text"
+                  id="role"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="Role"
+                />
+                <input
+                  type="text"
+                  id="company"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="Company"
+                />
+                <input
+                  type="date"
+                  id="start-date-experience"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="Start Date"
+                />
+                <input
+                  type="date"
+                  id="end-date-experience"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                  placeholder="End Date"
+                />
+              </div>
+            </div>
+
+            <!-- Left Sidebar Color Palette -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Sidebar Background Color</label
+              >
+              <select
+                id="sidebar-color"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+              >
+                <option value="navy">Navy</option>
+                <option value="green">Green</option>
+                <option value="red">Red</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
               </select>
             </div>
-            <div class="mt-2">
-              <label class="block text-sm font-bold text-gray-700">Font Family (Main Content)</label>
-              <select id="main-font-family" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
-                <option value="Arial">Arial</option>
-                <option value="Calibri">Calibri</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
+
+            <!-- Right Side Color Palette -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700"
+                >Right Side Background Color</label
+              >
+              <select
+                id="right-side-color"
+                class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+              >
+                <option value="light">Light</option>
+                <option value="navy">Navy</option>
+                <option value="green">Green</option>
+                <option value="red">Red</option>
+                <option value="dark">Dark</option>
               </select>
             </div>
-          </div>
-        </form>
-        <button id="generate-cv" class="mt-4 bg-navy text-white py-2 px-4 rounded-md w-full transition-colors duration-300 hover:bg-teal">Generate CV</button>
-      </div>
-      <!-- CV Preview -->
-      <div class="md:col-span-2 bg-white p-5 shadow-md rounded-md">
-          <div class="flex flex-col md:flex-row" id="cv-preview">
-            <div id="cv-sidebar" class="p-6 text-center text-white md:w-1/2 bg-navy">
-              <!-- Profile Image -->
-<img id="cv-profile-picture" class="w-32 h-32 rounded-full mx-auto mb-4" alt="Profile Picture">
-              <!-- Contact Info -->
-              <div class="mt-6">
-                <h3 class="font-bold uppercase">Contact Info:</h3>
-                <div class="mt-2 text-left">
-                  <strong>Phone:</strong>
-                  <span id="preview-phone">+921434</span>
-                </div>
-                <div class="mt-2 text-left">
-                  <strong>Email:</strong>
-                  <span id="preview-email">ahmad@gmail.com</span>
-                </div>
-                <div class="mt-2 text-left mb-2"> <!-- Added mb-2 for margin-bottom -->
-                  <strong>Address:</strong>
-                  <span id="preview-address">Your Address</span>
-                </div>
-              </div>
-              <hr class="my-4 border-gray-400">
-              <!-- Key Skills -->
-              <div class="mt-6">
-                <h3 class="font-bold uppercase">Key Skills:</h3>
-                <ul id="cv-skills" class="text-left">
-                  <li>• Skill 1</li>
-                </ul>
-              </div>
-              <hr class="my-4 border-gray-400">
-              <!-- Hobbies -->
-              <div class="mt-6">
-                <h3 class="font-bold uppercase">Hobbies:</h3>
-                <ul id="cv-hobbies" class="text-left">
-                  <li>• Hobby 1</li>
-                </ul>
-              </div>
-            </div>
-            <div id="cv-main" class="p-6 md:w-2/3">
+            <!-- Typography Options -->
+            <div>
+              <h3 class="text-lg font-bold text-navy mb-2">
+                Typography Options
+              </h3>
+
+              <!-- Font Size -->
               <div>
-                <h1 id="cv-name" class="text-3xl font-bold text-dark">Your Name</h1>
-                <p id="cv-designation" class="text-lg text-dark">Your Designation</p>
+                <label class="block text-sm font-bold text-gray-700"
+                  >Font Size (Sidebar)</label
+                >
+                <input
+                  type="number"
+                  id="sidebar-font-size"
+                  class="w-full border-gray-300 rounded-md p-2"
+                  placeholder="Enter font size (e.g., 14)"
+                />
               </div>
-              <hr class="my-4 border-gray-400">
-              <section>
-                <h2 class="text-2xl font-bold text-dark">Profile Summary:</h2>
-                <p class="text-lg" id="cv-description">Brief description about yourself.</p>
-              </section>
-              <hr class="my-4 border-gray-400">
-              <section class="mt-6">
-                <h2 class="text-2xl font-bold text-dark">Education:</h2>
-                <ul id="cv-education" class="list-disc ml-5 text-lg">
-                  <li>Degree | Institution | Start Date | End Date</li>
-                </ul>
-              </section>
-              <hr class="my-4 border-gray-400">
-              <section class="mt-6">
-                <h2 class="text-2xl font-bold text-dark">Experience:</h2>
-                <ul id="cv-experience" class="list-disc ml-5 text-lg">
-                  <li>Role | Company | Start Date | End Date</li>
-                </ul>
-              </section>
+              <div class="mt-2">
+                <label class="block text-sm font-bold text-gray-700"
+                  >Font Size (Main Content)</label
+                >
+                <input
+                  type="number"
+                  id="main-font-size"
+                  class="w-full border-gray-300 rounded-md p-2"
+                  placeholder="Enter font size (e.g., 16)"
+                />
+              </div>
+
+              <!-- Text Color -->
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-gray-700"
+                  >Text Color (Sidebar)</label
+                >
+                <input
+                  type="color"
+                  id="sidebar-text-color"
+                  class="w-full border-gray-300 rounded-md p-2"
+                />
+              </div>
+              <div class="mt-2">
+                <label class="block text-sm font-bold text-gray-700"
+                  >Text Color (Main Content)</label
+                >
+                <input
+                  type="color"
+                  id="main-text-color"
+                  class="w-full border-gray-300 rounded-md p-2"
+                />
+              </div>
+
+              <!-- Font Family -->
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-gray-700"
+                  >Font Family (Sidebar)</label
+                >
+                <select
+                  id="sidebar-font-family"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Calibri">Calibri</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                </select>
+              </div>
+              <div class="mt-2">
+                <label class="block text-sm font-bold text-gray-700"
+                  >Font Family (Main Content)</label
+                >
+                <select
+                  id="main-font-family"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Calibri">Calibri</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                </select>
+              </div>
             </div>
-          
+          </form>
+          <button
+            id="generate-cv"
+            class="mt-4 bg-navy text-white py-2 px-4 rounded-md w-full transition-colors duration-300 hover:bg-teal"
+          >
+            Generate CV
+          </button>
         </div>
-        <button id="download-cv" class="mt-6 bg-green text-white py-2 px-4 rounded-md">Download CV</button>
+        <!-- CV Preview -->
+        <div class="md:col-span-2 bg-white p-5 shadow-md rounded-md">
+          <div id="cv-preview" class="border-2 border-gray-200 rounded-md p-6">
+            <div class="flex flex-col md:flex-row">
+              <div
+                id="cv-sidebar"
+                class="p-6 text-center text-white md:w-1/2 bg-navy"
+              >
+                <!-- Profile Image -->
+                <img
+                  id="cv-profile-picture"
+                  class="w-32 h-32 rounded-full mx-auto mb-4"
+                  alt="Profile Picture"
+                />
+                <!-- Contact Info -->
+                <div class="mt-6">
+                  <h3 class="font-bold uppercase">Contact Info:</h3>
+                  <div class="mt-2 text-left">
+                    <strong>Phone:</strong>
+                    <span id="preview-phone">+921434</span>
+                  </div>
+                  <div class="mt-2 text-left">
+                    <strong>Email:</strong>
+                    <span id="preview-email">ahmad@gmail.com</span>
+                  </div>
+                  <div class="mt-2 text-left mb-2">
+                    <!-- Added mb-2 for margin-bottom -->
+                    <strong>Address:</strong>
+                    <span id="preview-address">Your Address</span>
+                  </div>
+                </div>
+                <hr class="my-4 border-gray-400" />
+                <!-- Key Skills -->
+                <div class="mt-6">
+                  <h3 class="font-bold uppercase">Key Skills:</h3>
+                  <ul id="cv-skills" class="text-left">
+                    <li>• Skill 1</li>
+                  </ul>
+                </div>
+                <hr class="my-4 border-gray-400" />
+                <!-- Hobbies -->
+                <div class="mt-6">
+                  <h3 class="font-bold uppercase">Hobbies:</h3>
+                  <ul id="cv-hobbies" class="text-left">
+                    <li>• Hobby 1</li>
+                  </ul>
+                </div>
+              </div>
+              <div id="cv-main" class="p-6 md:w-2/3">
+                <div>
+                  <h1 id="cv-name" class="text-3xl font-bold text-dark">
+                    Your Name
+                  </h1>
+                  <p id="cv-designation" class="text-lg text-dark">
+                    Your Designation
+                  </p>
+                </div>
+                <hr class="my-4 border-gray-400" />
+                <section>
+                  <h2 class="text-2xl font-bold text-dark">Profile Summary:</h2>
+                  <p class="text-lg" id="cv-description">
+                    Brief description about yourself.
+                  </p>
+                </section>
+                <hr class="my-4 border-gray-400" />
+                <section class="mt-6">
+                  <h2 class="text-2xl font-bold text-dark">Education:</h2>
+                  <ul id="cv-education" class="list-disc ml-5 text-lg">
+                    <li>Degree | Institution | Start Date | End Date</li>
+                  </ul>
+                </section>
+                <hr class="my-4 border-gray-400" />
+                <section class="mt-6">
+                  <h2 class="text-2xl font-bold text-dark">Experience:</h2>
+                  <ul id="cv-experience" class="list-disc ml-5 text-lg">
+                    <li>Role | Company | Start Date | End Date</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+            <button
+              id="download-cv"
+              class="mt-6 bg-green text-white py-2 px-4 rounded-md"
+            >
+              Download CV
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
+    <!-- fotter start -->
+    <footer class="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
+      <div
+        class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-center"
+      >
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          © 2024
+          <a href="https://muhammad-ahmed.pages.dev" class="hover:underline"
+            >Muhammad Ahmed™</a
+          >. All Rights Reserved. 💻✨
+          <br />
+          Created ❤️ by Muhammad Ahmed. 👨‍💻🚀
+        </span>
+      </div>
+    </footer>
 
-  <!-- fotter start -->
-   
+    <!-- fotter end -->
 
-  <footer class="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
-    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-center">
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-        © 2024 
-        <a href="https://muhammad-ahmed.pages.dev" class="hover:underline">Muhammad Ahmed™</a>. 
-        All Rights Reserved. 💻✨  
-        <br>
-        Created ❤️ by Muhammad Ahmed. 👨‍💻🚀
-      </span>
-    </div>
-  </footer>
-  
+    <script>
+      // Add event listeners to input fields
+      document.getElementById("name").addEventListener("input", updateCVName);
+      document
+        .getElementById("profile-picture")
+        .addEventListener("change", updateCVProfilePicture);
+      document
+        .getElementById("designation")
+        .addEventListener("input", updateCVDesignation);
+      document.getElementById("phone").addEventListener("input", updateCVPhone);
+      document.getElementById("email").addEventListener("input", updateCVEmail);
+      document
+        .getElementById("address")
+        .addEventListener("input", updateCVAddress);
+      document
+        .getElementById("description")
+        .addEventListener("input", updateCVDescription);
+      document
+        .getElementById("skills")
+        .addEventListener("input", updateCVSkills);
+      document
+        .getElementById("hobbies")
+        .addEventListener("input", updateCVHobbies);
+      document
+        .getElementById("degree")
+        .addEventListener("input", updateCVDegree);
+      document
+        .getElementById("institution")
+        .addEventListener("input", updateCVInstitution);
+      document
+        .getElementById("start-date-education")
+        .addEventListener("input", updateCVStartDateEducation);
+      document
+        .getElementById("end-date-education")
+        .addEventListener("input", updateCVEndDateEducation);
+      document.getElementById("role").addEventListener("input", updateCVRole);
+      document
+        .getElementById("company")
+        .addEventListener("input", updateCVCompany);
+      document
+        .getElementById("start-date-experience")
+        .addEventListener("input", updateCVStartDateExperience);
+      document
+        .getElementById("end-date-experience")
+        .addEventListener("input", updateCVEndDateExperience);
+      document
+        .getElementById("sidebar-color")
+        .addEventListener("input", updateCVSidebarColor);
+      document
+        .getElementById("right-side-color")
+        .addEventListener("input", updateCVRightSideColor);
+      document
+        .getElementById("sidebar-font-size")
+        .addEventListener("input", updateCVSidebarFontSize);
+      document
+        .getElementById("main-font-size")
+        .addEventListener("input", updateCVMainFontSize);
+      document
+        .getElementById("sidebar-text-color")
+        .addEventListener("input", updateCVSidebarTextColor);
+      document
+        .getElementById("main-text-color")
+        .addEventListener("input", updateCVMainTextColor);
+      document
+        .getElementById("sidebar-font-family")
+        .addEventListener("input", updateCVSidebarFontFamily);
+      document
+        .getElementById("main-font-family")
+        .addEventListener("input", updateCVMainFontFamily);
 
-  <!-- fotter end -->
+      // Update CV preview functions
+      function updateCVName() {
+        document.getElementById("cv-name").textContent =
+          document.getElementById("name").value;
+      }
 
-  <script>
-    // Add event listeners to input fields
-    document.getElementById("name").addEventListener("input", updateCVName);
-document.getElementById("profile-picture").addEventListener("change", updateCVProfilePicture);
-    document.getElementById("designation").addEventListener("input", updateCVDesignation);
-    document.getElementById("phone").addEventListener("input", updateCVPhone);
-    document.getElementById("email").addEventListener("input", updateCVEmail);
-    document.getElementById("address").addEventListener("input", updateCVAddress);
-    document.getElementById("description").addEventListener("input", updateCVDescription);
-    document.getElementById("skills").addEventListener("input", updateCVSkills);
-    document.getElementById("hobbies").addEventListener("input", updateCVHobbies);
-    document.getElementById("degree").addEventListener("input", updateCVDegree);
-    document.getElementById("institution").addEventListener("input", updateCVInstitution);
-    document.getElementById("start-date-education").addEventListener("input", updateCVStartDateEducation);
-    document.getElementById("end-date-education").addEventListener("input", updateCVEndDateEducation);
-    document.getElementById("role").addEventListener("input", updateCVRole);
-    document.getElementById("company").addEventListener("input", updateCVCompany);
-    document.getElementById("start-date-experience").addEventListener("input", updateCVStartDateExperience);
-    document.getElementById("end-date-experience").addEventListener("input", updateCVEndDateExperience);
-    document.getElementById("sidebar-color").addEventListener("input", updateCVSidebarColor);
-    document.getElementById("right-side-color").addEventListener("input", updateCVRightSideColor);
-    document.getElementById("sidebar-font-size").addEventListener("input", updateCVSidebarFontSize);
-    document.getElementById("main-font-size").addEventListener("input", updateCVMainFontSize);
-    document.getElementById("sidebar-text-color").addEventListener("input", updateCVSidebarTextColor);
-    document.getElementById("main-text-color").addEventListener("input", updateCVMainTextColor);
-    document.getElementById("sidebar-font-family").addEventListener("input", updateCVSidebarFontFamily);
-    document.getElementById("main-font-family").addEventListener("input", updateCVMainFontFamily);
+      // Update CV profile picture function
+      function updateCVProfilePicture() {
+        const profilePictureInput = document.getElementById("profile-picture");
+        const cvProfilePicture = document.getElementById("cv-profile-picture");
 
-    // Update CV preview functions
-    function updateCVName() {
-      document.getElementById("cv-name").textContent = document.getElementById("name").value;
-    }
+        if (profilePictureInput.files.length > 0) {
+          const file = profilePictureInput.files[0];
+          const reader = new FileReader();
 
+          reader.onload = function (event) {
+            cvProfilePicture.src = event.target.result;
+            cvProfilePicture.style.backgroundColor = "transparent"; // Remove background when image is loaded
+          };
 
-// Update CV profile picture function
-function updateCVProfilePicture() {
-  const profilePictureInput = document.getElementById("profile-picture");
-  const cvProfilePicture = document.getElementById("cv-profile-picture");
+          reader.readAsDataURL(file);
+        } else {
+          cvProfilePicture.src = ""; // Clear the image source
+          cvProfilePicture.style.backgroundColor = "#f0f0f0"; // Set background color when no image
+        }
+      }
 
-  if (profilePictureInput.files.length > 0) {
-    const file = profilePictureInput.files[0];
-    const reader = new FileReader();
+      function updateCVDesignation() {
+        document.getElementById("cv-designation").textContent =
+          document.getElementById("designation").value;
+      }
 
-    reader.onload = function (event) {
-      cvProfilePicture.src = event.target.result;
-      cvProfilePicture.style.backgroundColor = "transparent"; // Remove background when image is loaded
-    };
+      function updateCVPhone() {
+        document.getElementById("preview-phone").textContent =
+          document.getElementById("phone").value;
+      }
 
-    reader.readAsDataURL(file);
-  } else {
-    cvProfilePicture.src = ""; // Clear the image source
-    cvProfilePicture.style.backgroundColor = "#f0f0f0"; // Set background color when no image
-  }
-}
+      function updateCVEmail() {
+        document.getElementById("preview-email").textContent =
+          document.getElementById("email").value;
+      }
 
-    function updateCVDesignation() {
-      document.getElementById("cv-designation").textContent = document.getElementById("designation").value;
-    }
+      function updateCVAddress() {
+        document.getElementById("preview-address").textContent =
+          document.getElementById("address").value;
+      }
 
-    function updateCVPhone() {
-  document.getElementById("preview-phone").textContent = document.getElementById("phone").value;
-}
+      function updateCVDescription() {
+        document.getElementById("cv-description").textContent =
+          document.getElementById("description").value;
+      }
 
-function updateCVEmail() {
-  document.getElementById("preview-email").textContent = document.getElementById("email").value;
-}
+      function updateCVSkills() {
+        const skills = document
+          .getElementById("skills")
+          .value.split(",")
+          .filter(Boolean);
+        document.getElementById("cv-skills").innerHTML = skills
+          .map((skill) => `<li>• ${skill.trim()}</li>`)
+          .join("");
+      }
 
-function updateCVAddress() {
-  document.getElementById("preview-address").textContent = document.getElementById("address").value;
-}
+      function updateCVHobbies() {
+        const hobbies = document
+          .getElementById("hobbies")
+          .value.split(",")
+          .filter(Boolean);
+        document.getElementById("cv-hobbies").innerHTML = hobbies
+          .map((hobby) => `<li>• ${hobby.trim()}</li>`)
+          .join("");
+      }
 
-    function updateCVDescription() {
-      document.getElementById("cv-description").textContent = document.getElementById("description").value;
-    }
+      function updateCVDegree() {
+        document.getElementById("cv-education").innerHTML = `<li>${
+          document.getElementById("degree").value
+        } | ${document.getElementById("institution").value} | ${
+          document.getElementById("start-date-education").value
+        } | ${document.getElementById("end-date-education").value}</li>`;
+      }
 
-    function updateCVSkills() {
-      const skills = document.getElementById("skills").value.split(",").filter(Boolean);
-      document.getElementById("cv-skills").innerHTML = skills.map((skill) => `<li>• ${skill.trim()}</li>`).join("");
-    }
+      function updateCVInstitution() {
+        document.getElementById("cv-education").innerHTML = `<li>${
+          document.getElementById("degree").value
+        } | ${document.getElementById("institution").value} | ${
+          document.getElementById("start-date-education").value
+        } | ${document.getElementById("end-date-education").value}</li>`;
+      }
 
-    function updateCVHobbies() {
-      const hobbies = document.getElementById("hobbies").value.split(",").filter(Boolean);
-      document.getElementById("cv-hobbies").innerHTML = hobbies.map((hobby) => `<li>• ${hobby.trim()}</li>`).join("");
-    }
+      function updateCVStartDateEducation() {
+        document.getElementById("cv-education").innerHTML = `<li>${
+          document.getElementById("degree").value
+        } | ${document.getElementById("institution").value} | ${
+          document.getElementById("start-date-education").value
+        } | ${document.getElementById("end-date-education").value}</li>`;
+      }
 
-    function updateCVDegree() {
-      document.getElementById("cv-education").innerHTML = `<li>${document.getElementById("degree").value} | ${document.getElementById("institution").value} | ${document.getElementById("start-date-education").value} | ${document.getElementById("end-date-education").value}</li>`;
-    }
+      function updateCVEndDateEducation() {
+        document.getElementById("cv-education").innerHTML = `<li>${
+          document.getElementById("degree").value
+        } | ${document.getElementById("institution").value} | ${
+          document.getElementById("start-date-education").value
+        } | ${document.getElementById("end-date-education").value}</li>`;
+      }
 
-    function updateCVInstitution() {
-      document.getElementById("cv-education").innerHTML = `<li>${document.getElementById("degree").value} | ${document.getElementById("institution").value} | ${document.getElementById("start-date-education").value} | ${document.getElementById("end-date-education").value}</li>`;
-    }
+      function updateCVRole() {
+        document.getElementById("cv-experience").innerHTML = `<li>${
+          document.getElementById("role").value
+        } | ${document.getElementById("company").value} | ${
+          document.getElementById("start-date-experience").value
+        } | ${document.getElementById("end-date-experience").value}</li>`;
+      }
 
-    function updateCVStartDateEducation() {
-      document.getElementById("cv-education").innerHTML = `<li>${document.getElementById("degree").value} | ${document.getElementById("institution").value} | ${document.getElementById("start-date-education").value} | ${document.getElementById("end-date-education").value}</li>`;
-    }
+      function updateCVCompany() {
+        document.getElementById("cv-experience").innerHTML = `<li>${
+          document.getElementById("role").value
+        } | ${document.getElementById("company").value} | ${
+          document.getElementById("start-date-experience").value
+        } | ${document.getElementById("end-date-experience").value}</li>`;
+      }
 
-    function updateCVEndDateEducation() {
-      document.getElementById("cv-education").innerHTML = `<li>${document.getElementById("degree").value} | ${document.getElementById("institution").value} | ${document.getElementById("start-date-education").value} | ${document.getElementById("end-date-education").value}</li>`;
-    }
+      function updateCVStartDateExperience() {
+        document.getElementById("cv-experience").innerHTML = `<li>${
+          document.getElementById("role").value
+        } | ${document.getElementById("company").value} | ${
+          document.getElementById("start-date-experience").value
+        } | ${document.getElementById("end-date-experience").value}</li>`;
+      }
 
-    function updateCVRole() {
-      document.getElementById("cv-experience").innerHTML = `<li>${document.getElementById("role").value} | ${document.getElementById("company").value} | ${document.getElementById("start-date-experience").value} | ${document.getElementById("end-date-experience").value}</li>`;
-    }
+      function updateCVEndDateExperience() {
+        document.getElementById("cv-experience").innerHTML = `<li>${
+          document.getElementById("role").value
+        } | ${document.getElementById("company").value} | ${
+          document.getElementById("start-date-experience").value
+        } | ${document.getElementById("end-date-experience").value}</li>`;
+      }
 
-    function updateCVCompany() {
-      document.getElementById("cv-experience").innerHTML = `<li>${document.getElementById("role").value} | ${document.getElementById("company").value} | ${document.getElementById("start-date-experience").value} | ${document.getElementById("end-date-experience").value}</li>`;
-    }
+      function updateCVSidebarColor() {
+        document.getElementById(
+          "cv-sidebar"
+        ).className = `p-6 text-center text-white md:w-1/3 bg-${
+          document.getElementById("sidebar-color").value
+        }`;
+      }
 
-    function updateCVStartDateExperience() {
-      document.getElementById("cv-experience").innerHTML = `<li>${document.getElementById("role").value} | ${document.getElementById("company").value} | ${document.getElementById("start-date-experience").value} | ${document.getElementById("end-date-experience").value}</li>`;
-    }
+      function updateCVRightSideColor() {
+        document.getElementById("cv-main").className = `p-6 md:w-2/3 bg-${
+          document.getElementById("right-side-color").value
+        }`;
+      }
 
-    function updateCVEndDateExperience() {
-      document.getElementById("cv-experience").innerHTML = `<li>${document.getElementById("role").value} | ${document.getElementById("company").value} | ${document.getElementById("start-date-experience").value} | ${document.getElementById("end-date-experience").value}</li>`;
-    }
+      function updateCVSidebarFontSize() {
+        document.getElementById("cv-sidebar").style.fontSize = `${
+          document.getElementById("sidebar-font-size").value
+        }px`;
+      }
 
-    function updateCVSidebarColor() {
-      document.getElementById("cv-sidebar").className = `p-6 text-center text-white md:w-1/3 bg-${document.getElementById("sidebar-color").value}`;
-    }
+      function updateCVMainFontSize() {
+        const mainFontSize = document.getElementById("main-font-size").value;
+        const cvMain = document.getElementById("cv-main");
 
-    function updateCVRightSideColor() {
-      document.getElementById("cv-main").className = `p-6 md:w-2/3 bg-${document.getElementById("right-side-color").value}`;
-    }
+        cvMain.style.fontSize = `${mainFontSize}px`;
+        cvMain.querySelectorAll("h1, h2, p, li").forEach((element) => {
+          element.style.fontSize = `${mainFontSize}px`;
+        });
+      }
 
-    function updateCVSidebarFontSize() {
-      document.getElementById("cv-sidebar").style.fontSize = `${document.getElementById("sidebar-font-size").value}px`;
-    }
+      function updateCVSidebarTextColor() {
+        document.getElementById("cv-sidebar").style.color =
+          document.getElementById("sidebar-text-color").value;
+      }
 
-    function updateCVMainFontSize() {
-  const mainFontSize = document.getElementById("main-font-size").value;
-  const cvMain = document.getElementById("cv-main");
+      function updateCVMainTextColor() {
+        document.getElementById("cv-main").style.color =
+          document.getElementById("main-text-color").value;
+      }
 
-  cvMain.style.fontSize = `${mainFontSize}px`;
-  cvMain.querySelectorAll("h1, h2, p, li").forEach((element) => {
-    element.style.fontSize = `${mainFontSize}px`;
-  });
-}
+      function updateCVSidebarFontFamily() {
+        document.getElementById("cv-sidebar").style.fontFamily =
+          document.getElementById("sidebar-font-family").value;
+      }
 
-    function updateCVSidebarTextColor() {
-      document.getElementById("cv-sidebar").style.color = document.getElementById("sidebar-text-color").value;
-    }
+      function updateCVMainFontFamily() {
+        document.getElementById("cv-main").style.fontFamily =
+          document.getElementById("main-font-family").value;
+      }
 
-    function updateCVMainTextColor() {
-      document.getElementById("cv-main").style.color = document.getElementById("main-text-color").value;
-    }
-
-    function updateCVSidebarFontFamily() {
-      document.getElementById("cv-sidebar").style.fontFamily = document.getElementById("sidebar-font-family").value;
-    }
-
-    function updateCVMainFontFamily() {
-      document.getElementById("cv-main").style.fontFamily = document.getElementById("main-font-family").value;
-    }
-
-    // Download CV as PDF
-    document.getElementById("download-cv").addEventListener("click", function () {
-      const element = document.getElementById("cv-preview");
-      const options = {
-        margin: 10,
-        filename: "My_CV.pdf",
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
-      html2pdf().set(options).from(element).save();
-    });
-  </script>
-</body>
+      // Download CV as PDF
+      document
+        .getElementById("download-cv")
+        .addEventListener("click", function () {
+          const element = document.getElementById("cv-preview");
+          const options = {
+            margin: 10,
+            filename: "My_CV.pdf",
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          };
+          html2pdf().set(options).from(element).save();
+        });
+    </script>
+  </body>
 </html>
