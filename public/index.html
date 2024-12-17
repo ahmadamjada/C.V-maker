@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Maker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <link rel="stylesheet" href="/css/style.css"> -->
+  <style>
+    @media screen {
+      .cv-container {
+        max-width: 100%;
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+      .cv-container {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 0;
+      }
+
+      #cv-preview {
+        border: none !important;
+      }
+
+      #cv-sidebar {
+        width: 40% !important;
+      }
+
+      #cv-main {
+        width: 60% !important;
+      }
+
+      /* Ensure images are preserved in PDF */
+      img {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    /* Fixed sidebar content alignment */
+    #cv-sidebar {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #cv-sidebar span {
+      word-break: break-word;
+    }
+
+    /* Better spacing for list items */
+    #cv-sidebar ul li {
+      margin-bottom: 0.75rem;
+    }
+
+    /* Ensure consistent icon placement */
+    img.w-4,
+    img.w-5 {
+      flex-shrink: 0;
+    }
+
+    /* Toggle Switch Styles */
+    #projects-toggle:checked ~ .dot {
+      transform: translateX(100%);
+    }
+
+    #projects-toggle:checked ~ .block {
+      background-color: #1e40af;
+    }
+
+    /* Form Group Hover Effects */
+    .form-group:hover label {
+      color: #1e40af;
+    }
+
+    /* Animated Input Focus */
+    input:focus, textarea:focus, select:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: "#1e3a8a",
+            green: "#4ade80",
+            light: "#f1f5f9",
+            dark: "#1e293b",
+            red: "#f87171",
+            teal: "#14b8a6",
+            purple: "#a855f7",
+          },
+        },
+      },
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+  <!-- Add this CSS for PDF generation -->
+  <style>
+    @media print {
+      #cv-preview {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 0;
+        break-inside: avoid;
+      }
+
+      #cv-sidebar {
+        min-height: 297mm !important;
+      }
+
+      #cv-main {
+        min-height: 297mm !important;
+      }
+
+      .cv-section {
+        break-inside: avoid;
+      }
+
+      #cv-social-links {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-light text-dark">
+  <div class="max-w-6xl mx-auto py-10 px-4">
+    <h1 class="text-4xl font-bold text-center text-navy mb-6">CV Maker</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Input Form -->
+      <div class="bg-white p-6 shadow-lg rounded-md md:col-span-1 hover:shadow-xl transition-shadow duration-300">
+        <h2 class="text-2xl font-bold text-navy mb-6 text-center">CV Builder</h2>
+        
+        <!-- Tabs Navigation -->
+        <div class="flex mb-6 border-b">
+          <button id="details-tab" class="px-4 py-2 font-semibold text-navy border-b-2 border-navy" onclick="switchTab('details')">
+            <i class="fas fa-user-edit mr-2"></i>Add Details
+          </button>
+          <button id="customize-tab" class="px-4 py-2 font-semibold text-gray-500 hover:text-navy" onclick="switchTab('customize')">
+            <i class="fas fa-paint-brush mr-2"></i>Customize
+          </button>
+        </div>
+
+        <!-- Details Tab Content -->
+        <div id="details-content" class="space-y-6">
+          <form id="cv-form" class="space-y-6">
+            <!-- Personal Info Section -->
+            <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+              <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+                <i class="fas fa-user mr-2"></i>Personal Information
+              </h3>
+              <div class="space-y-4">
+                <!-- Personal Info -->
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Name</label>
+                  <input type="text" id="name"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Your Full Name" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Designation</label>
+                  <input type="text" id="designation"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Your Designation" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Profile Picture</label>
+                  <input type="file" id="profile-picture" accept="image/*"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Phone</label>
+                  <input type="text" id="phone"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Phone Number" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Email</label>
+                  <input type="email" id="email"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Email" />
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Address</label>
+                  <textarea id="address"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Your Address"></textarea>
+                </div>
+
+                <!-- Profile Summary -->
+                <div>
+                  <label class="block text-sm font-bold text-gray-700 mb-2">Profile Summary</label>
+                  <div id="editor-container" class="border border-gray-300 rounded-md">
+                    <div id="description" class="h-32"></div>
+                  </div>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-navy flex items-center">
+                    <i class="fas fa-share-nodes mr-2"></i>Social Media Links
+                  </h3>
+                    <!-- Toggle Switch -->
+                    <label class="flex items-center cursor-pointer">
+                      <div class="relative">
+                        <input type="checkbox" id="social-links-toggle" class="sr-only">
+                        <div class="block bg-gray-300 w-14 h-8 rounded-full"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                      </div>
+                    </label>
+                    </div>
+                  
+                  <div id="social-links-section" class="hidden space-y-4">
+                    <!-- LinkedIn -->
+                    <div class="flex gap-2">
+                      <div class="w-10 flex items-center justify-center">
+                        <i class="fab fa-linkedin text-xl text-navy"></i>
+                      </div>
+                      <input type="url" id="linkedin" placeholder="LinkedIn Profile URL"
+                        class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy" />
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="flex gap-2">
+                      <div class="w-10 flex items-center justify-center">
+                        <i class="fab fa-github text-xl text-navy"></i>
+                      </div>
+                      <input type="url" id="github" placeholder="GitHub Profile URL"
+                        class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy" />
+                    </div>
+
+                    <!-- Portfolio -->
+                    <div class="flex gap-2">
+                      <div class="w-10 flex items-center justify-center">
+                        <i class="fas fa-globe text-xl text-navy"></i>
+                      </div>
+                      <input type="url" id="portfolio" placeholder="Portfolio Website URL"
+                        class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Skills & Hobbies Section -->
+            <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+              <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+                <i class="fas fa-star mr-2"></i>Skills & Hobbies
+              </h3>
+              <div class="space-y-4">
+                <!-- Skills -->
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Key Skills</label>
+                  <div class="flex gap-2 mb-2">
+                    <select id="skill-icon" class="w-1/4 border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy">
+                      <option value="fa-star">★ Star</option>
+                      <option value="fa-check">✓ Check</option>
+                      <option value="fa-circle">• Dot</option>
+                      <option value="fa-code">⌨ Code</option>
+                      <option value="fa-lightbulb">💡 Idea</option>
+                      <option value="fa-brain">🧠 Mind</option>
+                      <option value="fa-gear">⚙ Gear</option>
+                    </select>
+                    <textarea id="skills" class="w-3/4 border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+                    placeholder="Skill 1, Skill 2, ..."></textarea>
+                  </div>
+                </div>
+
+                <!-- Hobbies -->
+                <div>
+                  <label class="block text-sm font-bold text-gray-700">Hobbies</label>
+                  <div class="flex gap-2 mb-2">
+                    <select id="hobby-icon" class="w-1/4 border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy">
+                      <option value="fa-heart">♥ Heart</option>
+                      <option value="fa-circle">• Dot</option>
+                      <option value="fa-music">♪ Music</option>
+                      <option value="fa-book">📚 Book</option>
+                      <option value="fa-gamepad">🎮 Game</option>
+                      <option value="fa-palette">🎨 Art</option>
+                      <option value="fa-plane">✈ Travel</option>
+                    </select>
+                    <textarea id="hobbies" class="w-3/4 border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+                    placeholder="Hobby 1, Hobby 2, ..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Education Section -->
+            <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+              <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+                <i class="fas fa-graduation-cap mr-2"></i>Education
+              </h3>
+              <div id="education-container">
+                <div class="space-y-2 mb-4 border-l-2 border-navy pl-4">
+                  <input type="text" id="degree-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Degree" />
+                  <input type="text" id="institution-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Institution" />
+                  <input type="date" id="start-date-education-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Start Date" />
+                  <input type="date" id="end-date-education-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="End Date" />
+                </div>
+              </div>
+              <button type="button" id="add-education" 
+                class="mt-2 flex items-center text-navy hover:text-teal transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                </svg>
+                Add Education
+              </button>
+            </div>
+
+            <!-- Experience Section -->
+            <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+              <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+                <i class="fas fa-briefcase mr-2"></i>Experience
+              </h3>
+              <div id="experience-container">
+                <div class="space-y-2 mb-4 border-l-2 border-navy pl-4">
+                  <input type="text" id="role-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Role" />
+                  <input type="text" id="company-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Company" />
+                  <input type="date" id="start-date-experience-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="Start Date" />
+                  <input type="date" id="end-date-experience-0"
+                    class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy"
+                    placeholder="End Date" />
+                </div>
+              </div>
+              <button type="button" id="add-experience" 
+                class="mt-2 flex items-center text-navy hover:text-teal transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                </svg>
+                Add Experience
+              </button>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-navy flex items-center">
+                  <i class="fas fa-code-branch mr-2"></i>Projects
+                </h3>
+                <!-- Toggle Switch -->
+                <label class="flex items-center cursor-pointer">
+                  <div class="relative">
+                    <input type="checkbox" id="projects-toggle" class="sr-only">
+                    <div class="block bg-gray-300 w-14 h-8 rounded-full"></div>
+                    <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                  </div>
+                </label>
+              </div>
+              
+              <div id="projects-section" class="hidden space-y-4">
+                <div id="projects-container">
+                  <div class="project-entry space-y-2 mb-4 border-l-2 border-navy pl-4">
+                    <input type="text" class="project-title w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+                      placeholder="Project Title" />
+                    <textarea class="project-description w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+                      placeholder="Project Description"></textarea>
+                    <input type="text" class="project-tech w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+                      placeholder="Technologies Used (comma-separated)" />
+                    <input type="url" class="project-link w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+                      placeholder="Project URL (optional)" />
+                  </div>
+                </div>
+                <button type="button" id="add-project" 
+                  class="mt-2 flex items-center text-navy hover:text-teal transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                  </svg>
+                  Add Project
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Customize Tab Content -->
+        <div id="customize-content" class="hidden space-y-6">
+          <!-- Colors Section -->
+          <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+            <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+              <i class="fas fa-palette mr-2"></i>Colors
+            </h3>
+            <div class="space-y-4">
+              <!-- Colors customization fields -->
+              <div>
+                <label class="block text-sm font-bold text-gray-700">Sidebar Background Color</label>
+                <select id="sidebar-color"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
+                  <option value="navy">Navy</option>
+                  <option value="green">Green</option>
+                  <option value="red">Red</option>
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </div>
+
+              <!-- Right Side Color Palette -->
+              <div>
+                <label class="block text-sm font-bold text-gray-700">Right Side Background Color</label>
+                <select id="right-side-color"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
+                  <option value="light">Light</option>
+                  <option value="navy">Navy</option>
+                  <option value="green">Green</option>
+                  <option value="red">Red</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Typography Section -->
+          <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+            <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+              <i class="fas fa-font mr-2"></i>Typography
+            </h3>
+            <div class="space-y-4">
+              <!-- Typography customization fields -->
+              <div>
+                <label class="block text-sm font-bold text-gray-700">Font Size (Sidebar)</label>
+                <input type="number" id="sidebar-font-size" class="w-full border-gray-300 rounded-md p-2"
+                  placeholder="Enter font size (e.g., 14)" />
+              </div>
+              <div class="mt-2">
+                <label class="block text-sm font-bold text-gray-700">Font Size (Main Content)</label>
+                <input type="number" id="main-font-size" class="w-full border-gray-300 rounded-md p-2"
+                  placeholder="Enter font size (e.g., 16)" />
+              </div>
+
+              <!-- Text Color -->
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-gray-700">Text Color (Sidebar)</label>
+                <input type="color" id="sidebar-text-color" class="w-full border-gray-300 rounded-md p-2" />
+              </div>
+              <div class="mt-2">
+                <label class="block text-sm font-bold text-gray-700">Text Color (Main Content)</label>
+                <input type="color" id="main-text-color" class="w-full border-gray-300 rounded-md p-2" />
+              </div>
+
+              <!-- Font Family -->
+              <div class="mt-4">
+                <label class="block text-sm font-bold text-gray-700">Font Family (Sidebar)</label>
+                <select id="sidebar-font-family"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
+                  <option value="Arial">Arial</option>
+                  <option value="Calibri">Calibri</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                </select>
+              </div>
+              <div class="mt-2">
+                <label class="block text-sm font-bold text-gray-700">Font Family (Main Content)</label>
+                <select id="main-font-family"
+                  class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy">
+                  <option value="Arial">Arial</option>
+                  <option value="Calibri">Calibri</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Template & Language Section -->
+          <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+            <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+              <i class="fas fa-palette mr-2"></i>Template & Language
+            </h3>
+            <div class="space-y-4">
+              <!-- Template Selection -->
+              <div>
+                <label class="block text-sm font-bold text-gray-700">CV Template</label>
+                <select id="cv-template" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy">
+                  <option value="modern">Modern</option>
+                  <option value="classic">Classic</option>
+                  <option value="professional">Professional</option>
+                  <option value="creative">Creative</option>
+                </select>
+              </div>
+
+              <!-- Language Selection -->
+              <div>
+                <label class="block text-sm font-bold text-gray-700">Language</label>
+                <select id="cv-language" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy">
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                  <option value="fr">Français</option>
+                  <option value="de">Deutsch</option>
+                  <option value="ar">العربية</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced Options -->
+          <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+            <h3 class="text-lg font-semibold text-navy mb-4 flex items-center">
+              <i class="fas fa-cog mr-2"></i>Advanced Options
+            </h3>
+            <div class="space-y-4">
+              <!-- Import/Export -->
+              <div class="flex gap-2">
+                <button onclick="exportCV()" class="flex-1 bg-navy text-white px-4 py-2 rounded hover:bg-opacity-90 transition-all duration-300">
+                  <i class="fas fa-download mr-2"></i>Export CV
+                </button>
+                <button onclick="document.getElementById('import-file').click()" class="flex-1 bg-teal text-white px-4 py-2 rounded hover:bg-opacity-90 transition-all duration-300">
+                  <i class="fas fa-upload mr-2"></i>Import CV
+                </button>
+                <input type="file" id="import-file" accept=".json" class="hidden" onchange="importCV(this)">
+              </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <!-- CV Preview -->
+      <!-- with same for all devices -->
+      <div class="md:col-span-2 bg-white p-5 shadow-md rounded-md">
+        <div class="cv-container" style="width: 210mm; margin: auto;">
+          <div id="cv-preview" class="border-2 border-gray-200 rounded-md p-6">
+            <div class="flex flex-row">
+              <!-- Left Sidebar -->
+              <div id="cv-sidebar" class="p-6 text-white w-[40%] bg-navy" style="min-width: 40%;">
+                <!-- Profile Image -->
+                <div class="mb-6">
+                  <img id="cv-profile-picture" class="w-32 h-32 rounded-full mx-auto" alt="Profile Picture" />
+                </div>
+
+                <!-- Contact Info -->
+                <div class="mb-6">
+                  <h3 class="font-bold uppercase text-lg border-b-2 border-gray-400 pb-2 mb-4 text-center">
+                    Contact Info
+                  </h3>
+                  <div class="space-y-3 px-1">
+                    <!-- Phone -->
+                    <div class="flex items-center">
+                      <div class="w-8 flex-shrink-0 flex justify-center">
+                        <i class="fas fa-phone text-lg"></i>
+                      </div>
+                      <span id="preview-phone" class="break-words">+9235678890</span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex items-center">
+                      <div class="w-8 flex-shrink-0 flex justify-center">
+                        <i class="fas fa-envelope text-lg"></i>
+                      </div>
+                      <span id="preview-email" class="break-all">ahmad@gmail.com</span>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="flex items-center">
+                      <div class="w-8 flex-shrink-0 flex justify-center">
+                        <i class="fas fa-location-dot text-lg"></i>
+                      </div>
+                      <span id="preview-address" class="break-words">Your Address</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Key Skills -->
+                <div class="mb-6">
+                  <h3 class="font-bold uppercase text-lg border-b-2 border-gray-400 pb-2 mb-3">
+                    Key Skills
+                  </h3>
+                  <ul id="cv-skills" class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fas fa-star w-4 h-4 mr-2"></i>
+                      <span>Skill 1</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Hobbies -->
+                <div class="mb-6">
+                  <h3 class="font-bold uppercase text-lg border-b-2 border-gray-400 pb-2 mb-3">
+                    Hobbies
+                  </h3>
+                  <ul id="cv-hobbies" class="space-y-2">
+                    <li class="flex items-start">
+                      <i class="fas fa-heart w-4 h-4 mr-2"></i>
+                      <span>Hobby 1</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Social Media Links Section -->
+                <div id="cv-social-links" class="mb-6 hidden">
+                  <!-- Content will be dynamically added here -->
+                </div>
+              </div>
+
+              <!-- Main Content -->
+              <div id="cv-main" class="p-8 w-[60%] bg-light">
+                <!-- Header -->
+                <div class="mb-6">
+                  <h1 id="cv-name" class="text-4xl font-bold text-dark mb-2">
+                    Your Name
+                  </h1>
+                  <p id="cv-designation" class="text-xl text-gray-600">
+                    Your Designation
+                  </p>
+                </div>
+
+                <!-- Profile Summary -->
+                <section class="mb-6">
+                  <h2 class="text-2xl font-bold text-dark border-b-2 border-gray-300 pb-2 mb-3">
+                    Profile Summary
+                  </h2>
+                  <p class="text-lg text-gray-700" id="cv-description">
+                    Brief description about yourself.
+                  </p>
+                </section>
+
+                <!-- Education -->
+                <section class="mb-6">
+                  <h2 class="text-2xl font-bold text-dark border-b-2 border-gray-300 pb-2 mb-3">
+                    Education
+                  </h2>
+                  <ul id="cv-education" class="space-y-4">
+                    <li class="relative pl-6">
+                      <div class="absolute left-0 top-2 w-2 h-2 bg-gray-600 rounded-full"></div>
+                      <h3 class="text-lg font-semibold">Degree</h3>
+                      <p class="text-gray-600">Institution</p>
+                      <p class="text-sm text-gray-500">Start Date - End Date</p>
+                    </li>
+                  </ul>
+                </section>
+
+                <!-- Experience -->
+                <section class="mb-6">
+                  <h2 class="text-2xl font-bold text-dark border-b-2 border-gray-300 pb-2 mb-3">
+                    Experience
+                  </h2>
+                  <ul id="cv-experience" class="space-y-4">
+                    <li class="relative pl-6">
+                      <div class="absolute left-0 top-2 w-2 h-2 bg-gray-600 rounded-full"></div>
+                      <h3 class="text-lg font-semibold">Role</h3>
+                      <p class="text-gray-600">Company</p>
+                      <p class="text-sm text-gray-500">Start Date - End Date</p>
+                    </li>
+                  </ul>
+                </section>
+
+                <!-- Projects Section (Initially Hidden) -->
+                <div id="cv-projects-section" class="hidden">
+                  <h2 class="text-2xl font-bold text-dark border-b-2 border-gray-300 pb-2 mb-4">
+                    Projects
+                  </h2>
+                  <ul id="cv-projects" class="space-y-4">
+                    <!-- Projects will be dynamically added here -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="download-cv"
+          class="mt-6 bg-green text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-200">
+          Download CV
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- fotter start -->
+  <footer class="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
+    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-center">
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+        © 2024
+        <a href="https://muhammad-ahmed.pages.dev" class="hover:underline text-navy">a</a>Muhammad Ahmed™</a>. All Rights Reserved. 💻✨
+        <br />
+        Created ❤️ by Muhammad Ahmed. 👨‍💻🚀
+      </span>
+    </div>
+  </footer>
+
+  <!-- fotter end -->
+
+  <script>
+    // Add these variables at the top of your script section
+let educationCount = 1;
+let experienceCount = 1;
+
+// Add these new event listeners
+document.getElementById('add-education').addEventListener('click', addEducation);
+document.getElementById('add-experience').addEventListener('click', addExperience);
+
+// Add these new functions
+function addEducation() {
+  const container = document.getElementById('education-container');
+  const newEducation = document.createElement('div');
+  newEducation.className = 'space-y-2 mb-4 border-l-2 border-navy pl-4';
+  newEducation.innerHTML = `
+    <div class="flex justify-end">
+      <button type="button" class="text-red hover:text-red-700 mb-2" onclick="this.parentElement.parentElement.remove()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+    <input type="text" id="degree-${educationCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Degree" />
+    <input type="text" id="institution-${educationCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Institution" />
+    <input type="date" id="start-date-education-${educationCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Start Date" />
+    <input type="date" id="end-date-education-${educationCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="End Date" />
+  `;
+  container.appendChild(newEducation);
+  educationCount++;
+  updateCVEducation();
+}
+
+function addExperience() {
+  const container = document.getElementById('experience-container');
+  const newExperience = document.createElement('div');
+  newExperience.className = 'space-y-2 mb-4 border-l-2 border-navy pl-4';
+  newExperience.innerHTML = `
+    <div class="flex justify-end">
+      <button type="button" class="text-red hover:text-red-700 mb-2" onclick="this.parentElement.parentElement.remove()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+    <input type="text" id="role-${experienceCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Role" />
+    <input type="text" id="company-${experienceCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Company" />
+    <input type="date" id="start-date-experience-${experienceCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Start Date" />
+    <input type="date" id="end-date-experience-${experienceCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="End Date" />
+  `;
+  container.appendChild(newExperience);
+  experienceCount++;
+  updateCVExperience();
+}
+
+
+    // Add event listeners to input fields
+    document.getElementById("name").addEventListener("input", updateCVName);
+    document
+      .getElementById("profile-picture")
+      .addEventListener("change", updateCVProfilePicture);
+    document
+      .getElementById("designation")
+      .addEventListener("input", updateCVDesignation);
+    document.getElementById("phone").addEventListener("input", updateCVPhone);
+    document.getElementById("email").addEventListener("input", updateCVEmail);
+    document
+      .getElementById("address")
+      .addEventListener("input", updateCVAddress);
+    document
+      .getElementById("description")
+      .addEventListener("input", updateCVDescription);
+    document
+      .getElementById("skills")
+      .addEventListener("input", updateCVSkills);
+    document
+      .getElementById("hobbies")
+      .addEventListener("input", updateCVHobbies);
+    document
+      .getElementById("sidebar-color")
+      .addEventListener("input", updateCVSidebarColor);
+    document
+      .getElementById("right-side-color")
+      .addEventListener("input", updateCVRightSideColor);
+    document
+      .getElementById("sidebar-font-size")
+      .addEventListener("input", updateCVSidebarFontSize);
+    document
+      .getElementById("main-font-size")
+      .addEventListener("input", updateCVMainFontSize);
+    document
+      .getElementById("sidebar-text-color")
+      .addEventListener("input", updateCVSidebarTextColor);
+    document
+      .getElementById("main-text-color")
+      .addEventListener("input", updateCVMainTextColor);
+    document
+      .getElementById("sidebar-font-family")
+      .addEventListener("input", updateCVSidebarFontFamily);
+    document
+      .getElementById("main-font-family")
+      .addEventListener("input", updateCVMainFontFamily);
+
+    // Update CV preview functions
+    function updateCVName() {
+      document.getElementById("cv-name").textContent =
+        document.getElementById("name").value;
+    }
+
+    // Update CV profile picture function
+    function updateCVProfilePicture() {
+      const profilePictureInput = document.getElementById("profile-picture");
+      const cvProfilePicture = document.getElementById("cv-profile-picture");
+
+      if (profilePictureInput.files.length > 0) {
+        const file = profilePictureInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          cvProfilePicture.src = event.target.result;
+          cvProfilePicture.style.backgroundColor = "transparent"; // Remove background when image is loaded
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        cvProfilePicture.src = ""; // Clear the image source
+        cvProfilePicture.style.backgroundColor = "#f0f0f0"; // Set background color when no image
+      }
+    }
+
+    function updateCVDesignation() {
+      document.getElementById("cv-designation").textContent =
+        document.getElementById("designation").value;
+    }
+
+    function updateCVPhone() {
+      document.getElementById("preview-phone").textContent =
+        document.getElementById("phone").value;
+    }
+
+    function updateCVEmail() {
+      document.getElementById("preview-email").textContent =
+        document.getElementById("email").value;
+    }
+
+    function updateCVAddress() {
+      document.getElementById("preview-address").textContent =
+        document.getElementById("address").value;
+    }
+
+    function updateCVDescription() {
+      document.getElementById("cv-description").textContent =
+        document.getElementById("description").value;
+    }
+
+    function updateCVSkills() {
+      const skills = document.getElementById("skills").value.split(",").filter(Boolean);
+      const selectedIcon = document.getElementById("skill-icon").value;
+      document.getElementById("cv-skills").innerHTML = skills
+        .map((skill) => `
+          <li class="flex items-center gap-3 mb-2">
+            <i class="fas ${selectedIcon} w-4 flex-shrink-0"></i>
+            <span>${skill.trim()}</span>
+          </li>
+        `)
+        .join("");
+    }
+
+    function updateCVHobbies() {
+      const hobbies = document.getElementById("hobbies").value.split(",").filter(Boolean);
+      const selectedIcon = document.getElementById("hobby-icon").value;
+      document.getElementById("cv-hobbies").innerHTML = hobbies
+        .map((hobby) => `
+          <li class="flex items-center gap-3 mb-2">
+            <i class="fas ${selectedIcon} w-4 flex-shrink-0"></i>
+            <span>${hobby.trim()}</span>
+          </li>
+        `)
+        .join("");
+    }
+
+    // Add these new functions for education and experience updates
+function updateCVEducation() {
+  const educationContainer = document.getElementById('education-container');
+  const educationEntries = educationContainer.getElementsByClassName('space-y-2');
+  const educationList = [];
+
+  Array.from(educationEntries).forEach((entry, index) => {
+    const degree = document.getElementById(`degree-${index}`)?.value;
+    const institution = document.getElementById(`institution-${index}`)?.value;
+    const startDate = document.getElementById(`start-date-education-${index}`)?.value;
+    const endDate = document.getElementById(`end-date-education-${index}`)?.value;
+    
+    if (degree || institution) {
+      educationList.push(`
+        <li class="relative pl-6 mb-4">
+          <div class="absolute left-0 top-2 w-2 h-2 bg-gray-600 rounded-full"></div>
+          <h3 class="text-lg font-semibold">${degree || ''}</h3>
+          <p class="text-gray-600">${institution || ''}</p>
+          <p class="text-sm text-gray-500">${formatDate(startDate)} - ${formatDate(endDate)}</p>
+        </li>
+      `);
+    }
+  });
+
+  document.getElementById("cv-education").innerHTML = educationList.join('');
+}
+
+function updateCVExperience() {
+  const experienceContainer = document.getElementById('experience-container');
+  const experienceEntries = experienceContainer.getElementsByClassName('space-y-2');
+  const experienceList = [];
+
+  Array.from(experienceEntries).forEach((entry, index) => {
+    const role = document.getElementById(`role-${index}`)?.value;
+    const company = document.getElementById(`company-${index}`)?.value;
+    const startDate = document.getElementById(`start-date-experience-${index}`)?.value;
+    const endDate = document.getElementById(`end-date-experience-${index}`)?.value;
+    
+    if (role || company) {
+      experienceList.push(`
+        <li class="relative pl-6 mb-4">
+          <div class="absolute left-0 top-2 w-2 h-2 bg-gray-600 rounded-full"></div>
+          <h3 class="text-lg font-semibold">${role || ''}</h3>
+          <p class="text-gray-600">${company || ''}</p>
+          <p class="text-sm text-gray-500">${formatDate(startDate)} - ${formatDate(endDate)}</p>
+        </li>
+      `);
+    }
+  });
+
+  document.getElementById("cv-experience").innerHTML = experienceList.join('');
+}
+
+// Helper function to format dates
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+// Update the addEducation function to include input event listeners
+function addEducation() {
+  const container = document.getElementById('education-container');
+  const newEducation = document.createElement('div');
+  newEducation.className = 'space-y-2 mb-4 border-l-2 border-navy pl-4';
+  
+  const currentCount = educationCount;
+  newEducation.innerHTML = `
+    <div class="flex justify-end">
+      <button type="button" class="text-red hover:text-red-700 mb-2" onclick="removeEducation(this, ${currentCount})">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+    <input type="text" id="degree-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Degree" />
+    <input type="text" id="institution-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Institution" />
+    <input type="date" id="start-date-education-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" />
+    <input type="date" id="end-date-education-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" />
+  `;
+  
+  container.appendChild(newEducation);
+  
+  // Add event listeners to new inputs
+  document.getElementById(`degree-${currentCount}`).addEventListener('input', updateCVEducation);
+  document.getElementById(`institution-${currentCount}`).addEventListener('input', updateCVEducation);
+  document.getElementById(`start-date-education-${currentCount}`).addEventListener('input', updateCVEducation);
+  document.getElementById(`end-date-education-${currentCount}`).addEventListener('input', updateCVEducation);
+  
+  educationCount++;
+  updateCVEducation();
+}
+
+// Update the addExperience function to include input event listeners
+function addExperience() {
+  const container = document.getElementById('experience-container');
+  const newExperience = document.createElement('div');
+  newExperience.className = 'space-y-2 mb-4 border-l-2 border-navy pl-4';
+  
+  const currentCount = experienceCount;
+  newExperience.innerHTML = `
+    <div class="flex justify-end">
+      <button type="button" class="text-red hover:text-red-700 mb-2" onclick="removeExperience(this, ${currentCount})">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+    <input type="text" id="role-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Role" />
+    <input type="text" id="company-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" placeholder="Company" />
+    <input type="date" id="start-date-experience-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" />
+    <input type="date" id="end-date-experience-${currentCount}" class="w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy transition-all duration-300 hover:border-navy" />
+  `;
+  
+  container.appendChild(newExperience);
+  
+  // Add event listeners to new inputs
+  document.getElementById(`role-${currentCount}`).addEventListener('input', updateCVExperience);
+  document.getElementById(`company-${currentCount}`).addEventListener('input', updateCVExperience);
+  document.getElementById(`start-date-experience-${currentCount}`).addEventListener('input', updateCVExperience);
+  document.getElementById(`end-date-experience-${currentCount}`).addEventListener('input', updateCVExperience);
+  
+  experienceCount++;
+  updateCVExperience();
+}
+
+// Add remove functions
+function removeEducation(button, index) {
+  button.parentElement.parentElement.remove();
+  updateCVEducation();
+}
+
+function removeExperience(button, index) {
+  button.parentElement.parentElement.remove();
+  updateCVExperience();
+}
+
+    function updateCVSidebarColor() {
+      const sidebar = document.getElementById("cv-sidebar");
+      // Remove existing background classes
+      sidebar.className = sidebar.className.replace(/bg-\w+/, '');
+      // Add new background class while preserving width and other classes
+      sidebar.className = `p-6 text-white w-[40%] bg-${document.getElementById("sidebar-color").value}`;
+      sidebar.style.minWidth = "40%"; // Ensure minimum width is maintained
+    }
+
+    function updateCVRightSideColor() {
+      const main = document.getElementById("cv-main");
+      // Remove existing background classes
+      main.className = main.className.replace(/bg-\w+/, '');
+      // Add new background class while preserving width and other classes
+      main.className = `p-8 w-[60%] bg-${document.getElementById("right-side-color").value}`;
+    }
+
+    function updateCVSidebarFontSize() {
+      document.getElementById("cv-sidebar").style.fontSize = `${document.getElementById("sidebar-font-size").value
+        }px`;
+    }
+
+    function updateCVMainFontSize() {
+      const mainFontSize = document.getElementById("main-font-size").value;
+      const cvMain = document.getElementById("cv-main");
+
+      cvMain.style.fontSize = `${mainFontSize}px`;
+      cvMain.querySelectorAll("h1, h2, p, li").forEach((element) => {
+        element.style.fontSize = `${mainFontSize}px`;
+      });
+    }
+
+    function updateCVSidebarTextColor() {
+      document.getElementById("cv-sidebar").style.color =
+        document.getElementById("sidebar-text-color").value;
+    }
+
+    function updateCVMainTextColor() {
+      document.getElementById("cv-main").style.color =
+        document.getElementById("main-text-color").value;
+    }
+
+    function updateCVSidebarFontFamily() {
+      document.getElementById("cv-sidebar").style.fontFamily =
+        document.getElementById("sidebar-font-family").value;
+    }
+
+    function updateCVMainFontFamily() {
+      document.getElementById("cv-main").style.fontFamily =
+        document.getElementById("main-font-family").value;
+    }
+
+    // Download CV as PDF
+    document.getElementById("download-cv").addEventListener("click", function () {
+      const element = document.getElementById("cv-preview"); // Select only the CV content
+
+      // Ensure proper scaling and formatting for PDF
+      const options = {
+        margin: 5,
+        filename: "My_CV.pdf",
+        html2canvas: {
+          scale: 2, // Higher scale for better quality on high DPI screens
+          // scrollX: 0,
+          width: 794, // A4 width in pixels at 96 DPI (210mm)
+          height: 1125, // A4 height in pixels at 96 DPI (297mm)
+          // scrollY: 0, // Prevent scrolling issues during PDF generation
+          useCORS: true, // Handle cross-origin images if any
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      // Disable the button temporarily to prevent multiple clicks
+      const downloadButton = document.getElementById("download-cv");
+      downloadButton.disabled = true;
+      downloadButton.textContent = "Generating...";
+
+      try {
+        html2pdf()
+          .set(options)
+          .from(element)
+          .save()
+          .then(() => {
+            // Re-enable the button after the process completes
+            downloadButton.disabled = false;
+            downloadButton.textContent = "Download CV";
+          })
+          .catch((error) => {
+            console.error("Error generating PDF:", error);
+            alert("An error occurred while downloading the CV. Please try again.");
+            downloadButton.disabled = false;
+            downloadButton.textContent = "Download CV";
+          });
+      } catch (error) {
+        console.error("Unhandled Error:", error);
+        alert("An unexpected error occurred. Please refresh and try again.");
+        downloadButton.disabled = false;
+        downloadButton.textContent = "Download CV";
+      }
+    });
+
+    // Add event listeners for icon selects
+    document.getElementById("skill-icon").addEventListener("change", updateCVSkills);
+    document.getElementById("hobby-icon").addEventListener("change", updateCVHobbies);
+
+    // Add this JavaScript for tab switching
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.getElementById('details-tab').className = 
+        tabName === 'details' 
+          ? 'px-4 py-2 font-semibold text-navy border-b-2 border-navy'
+          : 'px-4 py-2 font-semibold text-gray-500 hover:text-navy';
+      
+      document.getElementById('customize-tab').className = 
+        tabName === 'customize' 
+          ? 'px-4 py-2 font-semibold text-navy border-b-2 border-navy'
+          : 'px-4 py-2 font-semibold text-gray-500 hover:text-navy';
+
+      // Show/hide content
+      document.getElementById('details-content').className = 
+        tabName === 'details' ? 'space-y-6' : 'hidden space-y-6';
+      
+      document.getElementById('customize-content').className = 
+        tabName === 'customize' ? 'space-y-6' : 'hidden space-y-6';
+    }
+
+    // Add hover effects for sections
+    document.querySelectorAll('.bg-gray-50').forEach(section => {
+      section.addEventListener('mouseenter', () => {
+        section.classList.add('transform', 'scale-[1.01]');
+      });
+      
+      section.addEventListener('mouseleave', () => {
+        section.classList.remove('transform', 'scale-[1.01]');
+      });
+    });
+
+    // Projects Toggle
+    document.getElementById('projects-toggle').addEventListener('change', function() {
+      const projectsSection = document.getElementById('projects-section');
+      const cvProjectsSection = document.getElementById('cv-projects-section');
+      
+      projectsSection.classList.toggle('hidden');
+      if (cvProjectsSection) {
+        cvProjectsSection.classList.toggle('hidden');
+      }
+      updateCVProjects();
+    });
+
+    // Add Project
+    let projectCount = 1;
+
+    function addProject() {
+      const container = document.getElementById('projects-container');
+      const newProject = document.createElement('div');
+      newProject.className = 'project-entry space-y-2 mb-4 border-l-2 border-navy pl-4';
+      
+      newProject.innerHTML = `
+        <div class="flex justify-end">
+          <button type="button" class="text-red hover:text-red-700 mb-2" onclick="removeProject(this)">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <input type="text" class="project-title w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+          placeholder="Project Title" />
+        <textarea class="project-description w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+          placeholder="Project Description"></textarea>
+        <input type="text" class="project-tech w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+          placeholder="Technologies Used (comma-separated)" />
+        <input type="url" class="project-link w-full border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-navy focus:border-navy"
+          placeholder="Project URL (optional)" />
+      `;
+      
+      container.appendChild(newProject);
+      projectCount++;
+      
+      // Add event listeners to new inputs
+      newProject.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', updateCVProjects);
+      });
+    }
+
+    function removeProject(button) {
+      button.closest('.project-entry').remove();
+      updateCVProjects();
+    }
+
+    function updateCVProjects() {
+      if (!document.getElementById('projects-toggle').checked) return;
+      
+      const projectsList = document.getElementById('cv-projects');
+      if (!projectsList) return;
+      
+      const projects = [];
+      document.querySelectorAll('.project-entry').forEach(entry => {
+        const title = entry.querySelector('.project-title').value;
+        const description = entry.querySelector('.project-description').value;
+        const tech = entry.querySelector('.project-tech').value;
+        const link = entry.querySelector('.project-link').value;
+        
+        if (title || description) {
+          projects.push(`
+            <li class="mb-4">
+              <h3 class="text-lg font-semibold">${title}</h3>
+              <p class="text-gray-600">${description}</p>
+              ${tech ? `<p class="text-sm text-gray-500">Technologies: ${tech}</p>` : ''}
+              ${link ? `<a href="${link}" class="text-navy hover:text-teal" target="_blank">View Project</a>` : ''}
+            </li>
+          `);
+        }
+      });
+      
+      projectsList.innerHTML = projects.join('');
+    }
+
+    // Social Media Updates
+    function updateCVSocialLinks() {
+      const socialLinks = document.getElementById('cv-social-links');
+      if (!socialLinks) return;
+      
+      const linkedin = document.getElementById('linkedin').value;
+      const github = document.getElementById('github').value;
+      const portfolio = document.getElementById('portfolio').value;
+      
+      socialLinks.innerHTML = `
+        ${linkedin ? `<a href="${linkedin}" class="flex items-center gap-2 mb-2 hover:text-gray-300" target="_blank">
+          <i class="fab fa-linkedin w-5 text-center"></i>
+          <span class="break-all">${linkedin}</span>
+        </a>` : ''}
+        ${github ? `<a href="${github}" class="flex items-center gap-2 mb-2 hover:text-gray-300" target="_blank">
+          <i class="fab fa-github w-5 text-center"></i>
+          <span class="break-all">${github}</span>
+        </a>` : ''}
+        ${portfolio ? `<a href="${portfolio}" class="flex items-center gap-2 mb-2 hover:text-gray-300" target="_blank">
+          <i class="fas fa-globe w-5 text-center"></i>
+          <span class="break-all">${portfolio}</span>
+        </a>` : ''}
+      `;
+    }
+
+    // Add event listeners
+    document.getElementById('add-project').addEventListener('click', addProject);
+    document.getElementById('linkedin').addEventListener('input', updateCVSocialLinks);
+    document.getElementById('github').addEventListener('input', updateCVSocialLinks);
+    document.getElementById('portfolio').addEventListener('input', updateCVSocialLinks);
+
+    // Template switching
+    document.getElementById('cv-template').addEventListener('change', function() {
+      const template = this.value;
+      const cvPreview = document.getElementById('cv-preview');
+      
+      switch(template) {
+        case 'modern':
+          cvPreview.className = 'border-2 border-gray-200 rounded-md p-6';
+          // Add modern template specific styles
+          break;
+        case 'classic':
+          cvPreview.className = 'border-2 border-gray-200 p-6';
+          // Add classic template specific styles
+          break;
+        case 'professional':
+          cvPreview.className = 'border-2 border-navy p-6';
+          // Add professional template specific styles
+          break;
+        case 'creative':
+          cvPreview.className = 'border-2 border-teal rounded-lg p-6';
+          // Add creative template specific styles
+          break;
+      }
+    });
+
+    // Update the projects toggle function
+    document.getElementById('projects-toggle').addEventListener('change', function() {
+      const projectsSection = document.getElementById('projects-section');
+      const cvProjectsSection = document.getElementById('cv-projects-section');
+      
+      if (this.checked) {
+        projectsSection.classList.remove('hidden');
+        cvProjectsSection.classList.remove('hidden');
+      } else {
+        projectsSection.classList.add('hidden');
+        cvProjectsSection.classList.add('hidden');
+      }
+      updateCVProjects();
+    });
+
+    // Update the social media links function
+    function updateCVSocialLinks() {
+      const socialLinks = document.getElementById('cv-social-links');
+      if (!socialLinks) return;
+      
+      const linkedin = document.getElementById('linkedin').value;
+      const github = document.getElementById('github').value;
+      const portfolio = document.getElementById('portfolio').value;
+      
+      socialLinks.innerHTML = `
+        ${linkedin ? `
+          <a href="${linkedin}" class="flex items-center gap-2 mb-2 hover:text-gray-300" target="_blank">
+            <i class="fab fa-linkedin w-5 text-center"></i>
+            <span class="break-all">${linkedin}</span>
+          </a>` : ''}
+        ${github ? `
+          <a href="${github}" class="flex items-center gap-2 mb-2 hover:text-gray-300" target="_blank">
+            <i class="fab fa-github w-5 text-center"></i>
+            <span class="break-all">${github}</span>
+          </a>` : ''}
+        ${portfolio ? `
+          <a href="${portfolio}" class="flex items-center gap-2 mb-2 hover:text-gray-300" target="_blank">
+            <i class="fas fa-globe w-5 text-center"></i>
+            <span class="break-all">${portfolio}</span>
+          </a>` : ''}
+      `;
+    }
+
+    // Update the projects function
+    function updateCVProjects() {
+      if (!document.getElementById('projects-toggle').checked) return;
+      
+      const projectsList = document.getElementById('cv-projects');
+      if (!projectsList) return;
+      
+      const projects = [];
+      document.querySelectorAll('.project-entry').forEach(entry => {
+        const title = entry.querySelector('.project-title')?.value;
+        const description = entry.querySelector('.project-description')?.value;
+        const tech = entry.querySelector('.project-tech')?.value;
+        const link = entry.querySelector('.project-link')?.value;
+        
+        if (title || description) {
+          projects.push(`
+            <li class="mb-6 relative pl-6">
+              <div class="absolute left-0 top-2 w-2 h-2 bg-navy rounded-full"></div>
+              <h3 class="text-lg font-semibold text-navy">${title || ''}</h3>
+              <p class="text-gray-600 my-2">${description || ''}</p>
+              ${tech ? `<p class="text-sm text-gray-500 mb-2">Technologies: ${tech}</p>` : ''}
+              ${link ? `<a href="${link}" class="text-navy hover:text-teal inline-flex items-center gap-1" target="_blank">
+                <i class="fas fa-external-link-alt"></i>View Project
+              </a>` : ''}
+            </li>
+          `);
+        }
+      });
+      
+      projectsList.innerHTML = projects.join('');
+    }
+
+    // Add event listeners for template and language
+    document.getElementById('cv-template')?.addEventListener('change', function() {
+      // Update template styles
+      const template = this.value;
+      updateCVTemplate(template);
+    });
+
+    document.getElementById('cv-language')?.addEventListener('change', function() {
+      // Update language
+      const language = this.value;
+      updateCVLanguage(language);
+    });
+
+    // Initialize social links and projects
+    updateCVSocialLinks();
+    updateCVProjects();
+
+    // Initialize Rich Text Editor
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Quill editor
+      const quill = new Quill('#description', {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link'],
+            [{ 'header': [1, 2, false] }]
+          ]
+        },
+        placeholder: 'Write your profile summary...'
+      });
+
+      // Clear the editor on page load
+      quill.root.innerHTML = '';
+
+      // Function to update CV description
+      function updateCVDescription() {
+        const description = quill.root.innerHTML;
+        const previewDescription = document.getElementById('cv-description');
+        if (previewDescription) {
+          if (description.trim() === '<p><br></p>' || description.trim() === '') {
+            previewDescription.innerHTML = 'Brief description about yourself.';
+          } else {
+          previewDescription.innerHTML = description;
+          }
+        }
+      }
+
+      // Add event listener for editor changes
+      quill.on('text-change', function() {
+        updateCVDescription();
+      });
+
+      // Clear localStorage on page load
+      window.addEventListener('load', function() {
+        localStorage.removeItem('cv-description');
+        quill.root.innerHTML = '';
+            updateCVDescription();
+      });
+
+      // Clear form button (optional - add this if you want a manual clear button)
+      document.getElementById('clear-form')?.addEventListener('click', function() {
+        quill.root.innerHTML = '';
+        updateCVDescription();
+      });
+    });
+
+    // Add CSS for toggle switch
+    const style = document.createElement('style');
+    style.textContent = `
+      #social-links-toggle:checked ~ .dot {
+        transform: translateX(100%);
+        background-color: #fff;
+      }
+      #social-links-toggle:checked ~ .block {
+        background-color: #1e40af;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Initialize the social links section if toggle is checked
+      const socialLinksToggle = document.getElementById('social-links-toggle');
+    if (socialLinksToggle && socialLinksToggle.checked) {
+      updateCVSocialLinks();
+    }
+
+    // Add this code for social links functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const socialLinksToggle = document.getElementById('social-links-toggle');
+      const socialLinksSection = document.getElementById('social-links-section');
+      const cvSocialLinks = document.getElementById('cv-social-links');
+
+      // Function to update social links in CV
+      function updateCVSocialLinks() {
+        if (!cvSocialLinks) return;
+
+        if (!socialLinksToggle.checked) {
+          cvSocialLinks.classList.add('hidden');
+          return;
+        }
+
+        const linkedin = document.getElementById('linkedin')?.value;
+        const github = document.getElementById('github')?.value;
+        const portfolio = document.getElementById('portfolio')?.value;
+
+        if (!linkedin && !github && !portfolio) {
+          cvSocialLinks.classList.add('hidden');
+          return;
+        }
+
+        cvSocialLinks.classList.remove('hidden');
+        cvSocialLinks.innerHTML = `
+          <h3 class="font-bold uppercase text-lg border-b-2 border-gray-400 pb-2 mb-3">
+            Social Links
+          </h3>
+          <div class="space-y-3">
+            ${linkedin ? `
+              <div class="flex items-center space-x-3">
+                <i class="fab fa-linkedin w-5"></i>
+                <a href="${linkedin}" class="break-all hover:text-gray-300" target="_blank">${linkedin}</a>
+              </div>
+            ` : ''}
+            ${github ? `
+              <div class="flex items-center space-x-3">
+                <i class="fab fa-github w-5"></i>
+                <a href="${github}" class="break-all hover:text-gray-300" target="_blank">${github}</a>
+              </div>
+            ` : ''}
+            ${portfolio ? `
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-globe w-5"></i>
+                <a href="${portfolio}" class="break-all hover:text-gray-300" target="_blank">${portfolio}</a>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      // Add event listeners
+      if (socialLinksToggle) {
+        socialLinksToggle.addEventListener('change', function() {
+          if (socialLinksSection) {
+            socialLinksSection.classList.toggle('hidden', !this.checked);
+          }
+          updateCVSocialLinks();
+        });
+      }
+
+      // Add event listeners for social link inputs
+      ['linkedin', 'github', 'portfolio'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('input', updateCVSocialLinks);
+        }
+      });
+
+      // Initialize social links if toggle is checked
+      if (socialLinksToggle && socialLinksToggle.checked) {
+        updateCVSocialLinks();
+      }
+    });
+
+    // Helper function for toast notifications
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg text-white ${
+        type === 'success' ? 'bg-green' : 'bg-red'
+      } transition-opacity duration-300`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Preview modes
+    function setPreviewMode(mode) {
+      const preview = document.getElementById('cv-preview');
+      preview.className = 'border-2 border-gray-200 rounded-md p-6';
+      
+      switch(mode) {
+        case 'mobile':
+          preview.style.maxWidth = '480px';
+          preview.style.margin = 'auto';
+          break;
+        case 'desktop':
+          preview.style.maxWidth = '100%';
+          preview.style.margin = '0';
+          break;
+        case 'print':
+          preview.style.width = '210mm';
+          preview.style.margin = 'auto';
+          break;
+      }
+    }
+
+    // CV Analytics
+    function updateAnalytics() {
+      const content = document.getElementById('cv-preview').innerText;
+      const wordCount = content.trim().split(/\s+/).length;
+      const readingTime = Math.ceil(wordCount / 200); // Average reading speed
+      
+      document.getElementById('word-count').textContent = wordCount;
+      document.getElementById('reading-time').textContent = `${readingTime} min`;
+    }
+
+    // Image optimization
+    function optimizeImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 800;
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > height) {
+              if (width > MAX_SIZE) {
+                height *= MAX_SIZE / width;
+                width = MAX_SIZE;
+              }
+            } else {
+              if (height > MAX_SIZE) {
+                width *= MAX_SIZE / height;
+                height = MAX_SIZE;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Section reordering
+    new Sortable(document.getElementById('cv-main'), {
+      handle: '.section-handle',
+      animation: 150
+    });
+
+    // Add event listeners
+    document.addEventListener('input', autoSave);
+    document.addEventListener('change', updateAnalytics);
+
+    // Add these functions to your script section
+
+    // Function to collect form data
+    function collectFormData() {
+      return {
+        personalInfo: {
+          name: document.getElementById('name').value,
+          designation: document.getElementById('designation').value,
+          phone: document.getElementById('phone').value,
+          email: document.getElementById('email').value,
+          address: document.getElementById('address').value,
+          description: document.getElementById('description').value,
+          profilePicture: document.getElementById('profile-picture').files[0] ? 
+            document.getElementById('profile-picture').files[0].name : null
+      },
+      socialLinks: {
+        linkedin: document.getElementById('linkedin').value,
+        github: document.getElementById('github').value,
+        portfolio: document.getElementById('portfolio').value
+      },
+      skills: document.getElementById('skills').value,
+      hobbies: document.getElementById('hobbies').value,
+      education: Array.from(document.querySelectorAll('.education-entry')).map(entry => ({
+        degree: entry.querySelector('[id^="degree"]').value,
+        institution: entry.querySelector('[id^="institution"]').value,
+        startDate: entry.querySelector('[id^="start-date-education"]').value,
+        endDate: entry.querySelector('[id^="end-date-education"]').value
+      })),
+      experience: Array.from(document.querySelectorAll('.experience-entry')).map(entry => ({
+        role: entry.querySelector('[id^="role"]').value,
+        company: entry.querySelector('[id^="company"]').value,
+        startDate: entry.querySelector('[id^="start-date-experience"]').value,
+        endDate: entry.querySelector('[id^="end-date-experience"]').value
+      })),
+      projects: Array.from(document.querySelectorAll('.project-entry')).map(entry => ({
+        title: entry.querySelector('.project-title').value,
+        description: entry.querySelector('.project-description').value,
+        technologies: entry.querySelector('.project-tech').value,
+        link: entry.querySelector('.project-link').value
+      }))
+    };
+    }
+
+    // Function to populate form data
+    function populateFormData(data) {
+      // Populate personal info
+      Object.keys(data.personalInfo).forEach(key => {
+        const element = document.getElementById(key);
+        if (element) element.value = data.personalInfo[key];
+      });
+
+      // Populate social links
+      Object.keys(data.socialLinks).forEach(key => {
+        const element = document.getElementById(key);
+        if (element) element.value = data.socialLinks[key];
+      });
+
+      // Populate skills and hobbies
+      document.getElementById('skills').value = data.skills;
+      document.getElementById('hobbies').value = data.hobbies;
+
+      // Update CV preview
+      updateCVSkills();
+      updateCVHobbies();
+      updateCVSocialLinks();
+    }
+
+    // Template switching function
+    function updateCVTemplate(template) {
+      const cvPreview = document.getElementById('cv-preview');
+      const sidebar = document.getElementById('cv-sidebar');
+      const main = document.getElementById('cv-main');
+
+      switch(template) {
+        case 'modern':
+          cvPreview.className = 'border-2 border-gray-200 rounded-md p-6';
+          sidebar.className = 'p-6 text-white w-[40%] bg-navy';
+          main.className = 'p-8 w-[60%] bg-light';
+          break;
+        case 'classic':
+          cvPreview.className = 'border-2 border-gray-200 p-6';
+          sidebar.className = 'p-6 text-white w-[40%] bg-dark';
+          main.className = 'p-8 w-[60%] bg-light';
+          break;
+        case 'professional':
+          cvPreview.className = 'border-2 border-navy p-6';
+          sidebar.className = 'p-6 text-white w-[40%] bg-teal';
+          main.className = 'p-8 w-[60%] bg-light';
+          break;
+        case 'creative':
+          cvPreview.className = 'border-2 border-teal rounded-lg p-6';
+          sidebar.className = 'p-6 text-white w-[40%] bg-purple';
+          main.className = 'p-8 w-[60%] bg-light';
+          break;
+      }
+    }
+
+    // Language switching function
+    function updateCVLanguage(language) {
+      const translations = {
+        en: {
+          skills: 'Skills',
+          hobbies: 'Hobbies',
+          education: 'Education',
+          experience: 'Experience',
+          projects: 'Projects',
+          contact: 'Contact Info'
+        },
+        es: {
+          skills: 'Habilidades',
+          hobbies: 'Pasatiempos',
+          education: 'Educación',
+          experience: 'Experiencia',
+          projects: 'Proyectos',
+          contact: 'Información de Contacto'
+        },
+        fr: {
+          skills: 'Compétences',
+          hobbies: 'Loisirs',
+          education: 'Formation',
+          experience: 'Expérience',
+          projects: 'Projets',
+          contact: 'Coordonnées'
+        },
+        de: {
+          skills: 'Fähigkeiten',
+          hobbies: 'Hobbys',
+          education: 'Bildung',
+          experience: 'Erfahrung',
+          projects: 'Projekte',
+          contact: 'Kontakt'
+        },
+        ar: {
+          skills: 'المهارات',
+          hobbies: 'الهوايات',
+          education: 'التعليم',
+          experience: 'الخبرة',
+          projects: 'المشاريع',
+          contact: 'معلومات الاتصال'
+        }
+      };
+
+      const t = translations[language] || translations.en;
+
+      // Update section headings
+      document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.dataset.translate;
+        if (t[key]) element.textContent = t[key];
+      });
+
+      // Update document direction for Arabic
+      document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    }
+
+    // Initialize analytics
+    function initAnalytics() {
+      updateAnalytics();
+      // Add event listeners for content changes
+      const observer = new MutationObserver(updateAnalytics);
+      observer.observe(document.getElementById('cv-preview'), {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    }
+
+    // Call initialization functions when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      initAnalytics();
+      // Load saved data if exists
+      const savedData = localStorage.getItem('cv-data');
+      if (savedData) {
+        try {
+          populateFormData(JSON.parse(savedData));
+          showToast('Loaded saved CV data');
+        } catch (error) {
+          console.error('Error loading saved data:', error);
+        }
+      }
+    });
+
+    // Update the download CV function
+    function downloadCV() {
+      const element = document.getElementById('cv-preview');
+      const originalHeight = element.style.height;
+      
+      // Set minimum height for PDF generation
+      element.style.minHeight = '297mm';
+      
+      const opt = {
+        margin: 0,
+        filename: 'my-cv.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          letterRendering: true,
+          height: element.scrollHeight // Capture full height
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait'
+        }
+      };
+
+      // Generate PDF
+      html2pdf().set(opt).from(element).save().then(() => {
+        // Restore original height
+        element.style.height = originalHeight;
+      });
+    }
+
+    // Update the download button event listener
+    document.getElementById('download-cv').addEventListener('click', downloadCV);
+  </script>
+</body>
+
+</html>

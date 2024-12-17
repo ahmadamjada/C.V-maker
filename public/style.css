@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+     @media (max-width: 600px) {
+    #cv-preview {
+        padding: 10px; /* Adjust padding for mobile */
+        font-size: 14px; /* Adjust font size for mobile */
+    }
+    #cv-sidebar {
+        width: 100%; /* Make sidebar full width on mobile */
+        margin-bottom: 20px; /* Add margin for spacing */
+    }
+    #cv-main {
+        width: 100%; /* Make main content full width on mobile */
+    }
+
+      .cv-section {
+    width: 100%; /* Change fixed width to 100% */
+    max-width: 600px; /* Set a max-width for larger screens */
+}
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    #cv-preview {
+        border: none; /* Remove border for print */
+        box-shadow: none; /* Remove shadow for print */
+    }
+    /* Additional styles to adjust layout for print */
+}
+  }
